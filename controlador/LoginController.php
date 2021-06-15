@@ -1,25 +1,22 @@
 <?php
-include_once "../modelo/Conexion.php";
-
-
-
+include_once "../modelo/Usuario.php";
+session_start();
 $username = $_POST["username"];
 $password = $_POST["password"];
 
 
-// conexion con sonculta preparada
+$usuario = new Usuario();
 
-// $sql = "Select * from usuario where username = :user and password = :password"
-// $preparar = $conexion->prepare($sql);
-// $preparar->execute(array(':user'-> $username, ':password'-> $password));
-// $usuario = $preparar.fetchAll(PDO::object)
+$usuario->Loguearse($username, $password);
 
-// foreach($usuario as $dato){
-//      $_SESSION["id_usuario"]= $dato->id_usuario;
-// }
-// header ('Location: ../vistas/aula_virtual.php')
+if (!empty($usuario->datos)) {
 
-// header('Location ../index.php')
-
-echo "Nombre de usuario: " . $username;
-echo "Nombre de password: " . $password;
+    foreach ($usuario->datos as $dato) {
+        $_SESSION["id_usuario"] = $dato->id_admin;
+        $_SESSION["nombres"] = $dato->nombres;
+    }
+    header("Location: ../vistas/aula_virtual.php");
+} else {
+    $_SESSION["error"] = "EL usuario o contraseña es incorrecto";
+    header("Location: ../index.php");
+}
